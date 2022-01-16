@@ -16,7 +16,7 @@ const messages = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
 
 const word = "magnolia";
-const guessedLetter = [];
+const guessedLetterArray = [];
 
 const placeholder = function (word) {
     const placeholderLetters = [];
@@ -56,11 +56,44 @@ const validateInput = function (input) {
 };
 
 const makeGuess = function (letter) {
-    letter = letter.toUpperCase;
-    if (guessedLetter.includes(letter)) {
+    letter = letter.toUpperCase();
+    if (guessedLetterArray.includes(letter)) {
         messages.innerText = "You have already guessed this letter. Try again";
     } else {
-        guessedLetter.push(letter);
-        console.log(guessedLetter);
+        guessedLetterArray.push(letter);
+        console.log(guessedLetterArray);
+        displayLetters();
+        updateWord(guessedLetterArray);
+    }
+};
+
+const displayLetters = function () {
+    guessedLetters.innerHTML = "";
+    for (const letters of guessedLetterArray) {
+        const li = document.createElement("li");
+        li.innerText = letters;
+        guessedLetters.append(li);
+    }
+};
+
+const updateWord = function (guessedLetterArray) {
+    const wordUpper = word.toUpperCase();
+    const wordArray = wordUpper.split("");
+    const revealLetter = [];
+    for (const letters of wordArray) {
+        if (guessedLetterArray.includes(letters)) {
+            revealLetter.push(letters.toUpperCase());
+        } else {
+            revealLetter.push("●");
+        }
+    }
+    wordInProgress.innerText = revealLetter.join("");
+    successfulGuess();
+};
+
+const successfulGuess = function () {
+    if (word.toUpperCase() === wordInProgress.innerText) {
+        messages.classList.add("win");
+        messages.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
     }
 };

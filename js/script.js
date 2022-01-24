@@ -16,13 +16,13 @@ const messages = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
 
 let word = "magnolia";
-const guessedLetterArray = [];
+let guessedLetterArray = [];
 let guessesRemaining = 8;
 
 const getWord = async function () {
     const res = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
     const data = await res.text();
-    const wordArray = word.split("\n");
+    const wordArray = data.split("\n");
     const randomWord = Math.floor(Math.random() * wordArray.length);
     word = wordArray[randomWord].trim();
     placeholder(word);
@@ -113,6 +113,7 @@ const countGuesses = function (guess) {
 
     if (remainingGuesses === 0) {
         messages.innerHTML = `The game is over. The word was <span class="highlight">${word}</span>.`;
+        startOver();
     } else if (remainingGuesses === 1) {
         remainingGuessesSpan.innerText = `${guessesRemaining} guess`;
     } else {
@@ -124,5 +125,29 @@ const successfulGuess = function () {
     if (word.toUpperCase() === wordInProgress.innerText) {
         messages.classList.add("win");
         messages.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+
+        startOver();
     }
 };
+
+const startOver = function () {
+    guessButton.classList.add("hide");
+    remainingGuesses.classList.add("hide");
+    guessedLetters.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+};
+
+playAgainButton.addEventListener("click", function () {
+    messages.classList.remove("win");
+    messages.innerText = "";
+    guessedLetters.innerHTML = "";
+    guessesRemaining = 8;
+    guessedLetterArray = [];
+    remainingGuessesSpan.innerText = `${guessesRemaining} guesses`;
+
+    guessButton.classList.remove("hide");
+    remainingGuesses.classList.remove("hide");
+    guessedLetters.classList.remove("hide");
+    playAgainButton.classList.add("hide");
+    getWord();
+});
